@@ -9,6 +9,7 @@ var _$_ = patternmatch.match.var()
 var __ = patternmatch.match.any();
 var ALL = patternmatch.match.all()
 
+//Basic pattern matching
 var p = pattern(
   match(1,_$_,3),function(x){return 2*x},
   match(7),function(){return "lucky"},
