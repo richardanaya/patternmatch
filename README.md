@@ -1,4 +1,23 @@
 # patternmatch.js
-A pattern matching library for javascript inspired from functional programming. This library's emphasis is on using native javascript and high performance comparable with if statements.
+A pattern matching library inspired from functional programming in native javascript.
 
+# Examples
+```javascript
+var patternmatch = require("patternmatch")
+var pattern = patternmatch.pattern
+var _$_ = patternmatch.match.var()
+var __ = patternmatch.match.any();
+var ALL = patternmatch.match.all()
+
+var p = pattern(
+  match(1,_$_,3),function(x){return 2*x},
+  match(7),function(){return "lucky"},
+  match(ALL),function(){return "all"}
+);
+
+p(7) // "lucky"
+p(1,5,3) // 10
+p(1,10,3) // 20
+p("blah") // "all"
+```
 
