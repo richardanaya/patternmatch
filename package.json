@@ -1,0 +1,25 @@
+{
+  "name": "patternmatch",
+  "version": "0.0.1",
+  "description": "A functional pattern matching library",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/richardanaya/patternmatch.git"
+  },
+  "keywords": [
+    "pattern",
+    "matching",
+    "functional",
+    "programming"
+  ],
+  "author": "Richard Anaya <richard.anaya@gmail.com> (http://www.richardanaya.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/richardanaya/patternmatch/issues"
+  },
+  "homepage": "https://github.com/richardanaya/patternmatch#readme"
+}
