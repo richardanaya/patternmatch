@@ -3,11 +3,125 @@ var patternmatch = require("../patternmatch");
 var pattern = patternmatch.pattern;
 var match = patternmatch.match;
 
-describe('Array', function() {
-  describe('#indexOf()', function () {
-    it('should return -1 when the value is not present', function () {
-      assert.equal(-1, [1,2,3].indexOf(5));
-      assert.equal(-1, [1,2,3].indexOf(0));
+describe('match', function() {
+  describe('#()', function () {
+    var matcher = match(42);
+    it('should return true when value is same', function () {
+      assert.equal(true, matcher(42).result);
     });
+    it('should return false when value is not same', function () {
+      assert.equal(false, matcher(43).result);
+    });
+    it('should throw exception with no definition', function () {
+      assert.throws(function() { match() }, Error);
+    });
+  });
+  describe('#.any()', function () {
+    var matcher = match.any();
+    it('returns true', function () {
+      assert.equal(true, matcher().result);
+    });
+  });
+});
+
+describe('pattern', function() {
+  describe('#()', function () {
+    it('should throw if used empty', function () {
+      var p = pattern();
+      assert.throws(function() { p(); }, Error);
+    });
+    it('should test match and execute function', function () {
+      var p = pattern(
+        match(42),function(){return "life"}
+      );
+      assert.equal("life", p(42));
+    });
+    it('should test match multiple matchers and functions', function () {
+      var p = pattern(
+        match(42),function(){return "life"},
+        match(43),function(){return "notlife"}
+      );
+      assert.equal("life", p(42));
+      assert.equal("notlife", p(43));
+    });
+    it('should test match multiple values', function () {
+      var p = pattern(
+        match(1),function(){return "notcount"},
+        match(1,2),function(){return "count"}
+      );
+      assert.equal("count", p(1,2));
+    });
+    it('should fail testing multiple values', function () {
+      var p = pattern(
+        match(1,2),function(){return "count"}
+      );
+      assert.throws(function() { p(1); }, Error);
+    });
+    it('should catch any with any matcher', function () {
+      var __ = match.any();
+      var p = pattern(
+        match(__),function(){return "all"}
+      );
+      assert.equal("all", p(4));
+    });
+    it('should pass varables to evaluator', function () {
+      var _$_ = match.var()
+      var p = pattern(
+        match(_$_),function(x){return x*2}
+      );
+      assert.equal(4, p(2));
+    });
+    it('should pass multiple varables to evaluator', function () {
+      var _$_ = match.var()
+      var p = pattern(
+        match(_$_,_$_),function(x,y){return x+y}
+      );
+      assert.equal(6, p(2,4));
+    });
+    it('should should pass variables mixed in to pattern', function () {
+      var _$_ = match.var()
+      var p = pattern(
+        match(1,_$_),function(x){return x*2}
+      );
+      assert.equal(4, p(1,2));
+    });
+    it('should should pass variables mixed in to pattern in complicated way', function () {
+      var _$_ = match.var()
+      var p = pattern(
+        match(1,_$_,3,_$_),function(x,y){return x+y}
+      );
+      assert.equal(6, p(1,2,3,4));
+    });
+    it('should catch all with all', function () {
+      var ALL = match.all()
+      var p = pattern(
+        match(1),function(){return "notcount"},
+        match(1,2),function(){return "count"},
+        match(ALL),function(){return "last"}
+      );
+      assert.equal("last", p(4,4,2));
+    });
+    it('test all basic', function () {
+      var _$_ = match.var()
+      var __ = match.any();
+      var ALL = match.all()
+      var p = pattern(
+        match(1,_$_,4),function(x){return 2*x},
+        match(1,__,3),function(){return "any"},
+        match(ALL),function(){return "all"}
+      );
+      assert.equal("any", p(1,423442,3));
+      assert.equal(8, p(1,4,4));
+      assert.equal("all", p(1123123));
+    });
+    /*it('should fail identification', function () {
+      var _$_ = match.var()
+      var __ = match.any()
+      var p = pattern(
+        match(1,_$_,3,_$_),function(x,y){return x+y},
+        match(__),function(){return "nicesave"}
+      );
+      assert.equal("nicesave", p(1,2,2,4));
+    });*/
   });
 });
