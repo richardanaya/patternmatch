@@ -22,6 +22,33 @@ describe('match', function() {
       assert.equal(true, matcher().result);
     });
   });
+  describe('#.array()', function () {
+    var matcher = match.array();
+    it('returns true for empty array', function () {
+      assert.equal(true, matcher([]).result);
+    });
+    it('returns false for non-empty array', function () {
+      assert.equal(false, matcher([1]).result);
+    });
+  });
+  describe('#.array(1)', function () {
+    var matcher = match.array(1);
+    it('returns true matching array', function () {
+      assert.equal(true, matcher([1]).result);
+    });
+    it('returns false matching different array', function () {
+      assert.equal(false, matcher([2]).result);
+    });
+  });
+  describe('#.array(1,2,3)', function () {
+    var matcher = match.array(1,2,3);
+    it('returns true matching array', function () {
+      assert.equal(true, matcher([1,2,3]).result);
+    });
+    it('returns false matching different array', function () {
+      assert.equal(false, matcher([3,2,1]).result);
+    });
+  });
 });
 
 describe('pattern', function() {
@@ -114,6 +141,46 @@ describe('pattern', function() {
       assert.equal(8, p(1,4,4));
       assert.equal("all", p(1123123));
     });
+    it('test empty lists', function () {
+      var _$_ = match.var()
+      var __ = match.any();
+      var ALL = match.all()
+      var ARRAY = match.array
+      var p = pattern(
+        match(1,ARRAY()),function(){return "found"}
+      );
+      assert.equal("found", p(1,[]));
+    })
+    it('test simple lists', function () {
+      var _$_ = match.var()
+      var __ = match.any();
+      var ALL = match.all()
+      var ARRAY = match.array
+      var p = pattern(
+        match(1,ARRAY(2,3,4),5),function(){return "found"}
+      );
+      assert.equal("found", p(1,[2,3,4],5));
+    })
+    it('test variable from simple lists', function () {
+      var _$_ = match.var()
+      var __ = match.any();
+      var ALL = match.all()
+      var ARRAY = match.array
+      var p = pattern(
+        match(1,ARRAY(2,_$_,4),5),function(x){return x}
+      );
+      assert.equal(3, p(1,[2,3,4],5));
+    })
+    it('test variables from mixed lists', function () {
+      var _$_ = match.var()
+      var __ = match.any();
+      var ALL = match.all()
+      var ARRAY = match.array
+      var p = pattern(
+        match(_$_,ARRAY(2,_$_,4),ARRAY(2,2,_$_)),function(a,b,c){return a+b+c}
+      );
+      assert.equal(19, p(4,[2,10,4],[2,2,5]));
+    })
     /*it('should fail identification', function () {
       var _$_ = match.var()
       var __ = match.any()

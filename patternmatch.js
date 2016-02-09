@@ -54,8 +54,24 @@
   match.any = function(){return function(){return {result:true}}}
   match.var = function(){return function(){return {result:true,variables:arguments[0]}}}
   match.all = function(){return {______MATCH_ALL_____:true}}
+  match.array = function(){
+    var arrayParams = arguments;
+    if(arrayParams.length == 0){
+      return function(a){
+        if(a.length==0){
+          return {result:true}
+        }
+        return {result:false}
+      }
+    }
+    else {
+      return function(){
+        return match.apply(this,arrayParams).apply(this,arguments[0])
+      }
+    }
+  }
 
-  window.matches = module.exports = {
+  window.patternmatch = module.exports = {
     pattern  : pattern,
     match    : match
   };
