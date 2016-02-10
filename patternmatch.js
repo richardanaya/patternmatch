@@ -27,14 +27,16 @@
     var matchParams = arguments;
     if(matchParams.length==0){throw Error("match requires definition")}
     return function(){
-      if(matchParams[0].______MATCH_ALL_____==true){return {result:true}}
+      var firstMatchParam = matchParams[0];
+      if(firstMatchParam!==null &&firstMatchParam!==undefined &&
+        firstMatchParam.______MATCH_ALL_____==true){return {result:true}}
       if(arguments.length!=matchParams.length){return {result: false}}
       var results = []
       for(var i=0;i<arguments.length;i++){
         if(isFunction(matchParams[i])){
           results.push(matchParams[i](arguments[i]))
         }
-        else if(arguments[i]!=matchParams[i]){
+        else if(arguments[i]!==matchParams[i]){
           results.push({result:false})
         }
       }
@@ -51,9 +53,9 @@
       return {result:true, variables:variables};
     }
   }
-  match.any = function(){return function(){return {result:true}}}
-  match.var = function(){return function(){return {result:true,variables:arguments[0]}}}
-  match.all = function(){return {______MATCH_ALL_____:true}}
+  match.any = function(){return {result:true}}
+  match.var = function(){return {result:true,variables:arguments[0]}}
+  match.all = {______MATCH_ALL_____:true}
   match.array = function(){
     var arrayParams = arguments;
     if(arrayParams.length == 0){

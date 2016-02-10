@@ -5,19 +5,32 @@ var match = patternmatch.match;
 
 describe('match', function() {
   describe('#()', function () {
-    var matcher = match(42);
-    it('should return true when value is same', function () {
+    it('should match number literals', function () {
+      var matcher = match(42);
       assert.equal(true, matcher(42).result);
-    });
-    it('should return false when value is not same', function () {
       assert.equal(false, matcher(43).result);
+    });
+    it('should match null literal', function () {
+      var matcher = match(null);
+      assert.equal(true, matcher(null).result);
+      assert.equal(false, matcher(1).result);
+    });
+    it('should matched undefined literal', function () {
+      var matcher = match(undefined);
+      assert.equal(true, matcher(undefined).result);
+      assert.equal(false, matcher(1).result);
+    });
+    it('should matched undefined literal', function () {
+      var matcher = match("hey");
+      assert.equal(true, matcher("hey").result);
+      assert.equal(false, matcher("bro").result);
     });
     it('should throw exception with no definition', function () {
       assert.throws(function() { match() }, Error);
     });
   });
   describe('#.any()', function () {
-    var matcher = match.any();
+    var matcher = match.any;
     it('returns true', function () {
       assert.equal(true, matcher().result);
     });
@@ -85,42 +98,42 @@ describe('pattern', function() {
       assert.throws(function() { p(1); }, Error);
     });
     it('should catch any with any matcher', function () {
-      var __ = match.any();
+      var __ = match.any;
       var p = pattern(
         match(__),function(){return "all"}
       );
       assert.equal("all", p(4));
     });
     it('should pass varables to evaluator', function () {
-      var _$_ = match.var()
+      var _$_ = match.var
       var p = pattern(
         match(_$_),function(x){return x*2}
       );
       assert.equal(4, p(2));
     });
     it('should pass multiple varables to evaluator', function () {
-      var _$_ = match.var()
+      var _$_ = match.var
       var p = pattern(
         match(_$_,_$_),function(x,y){return x+y}
       );
       assert.equal(6, p(2,4));
     });
     it('should should pass variables mixed in to pattern', function () {
-      var _$_ = match.var()
+      var _$_ = match.var
       var p = pattern(
         match(1,_$_),function(x){return x*2}
       );
       assert.equal(4, p(1,2));
     });
     it('should should pass variables mixed in to pattern in complicated way', function () {
-      var _$_ = match.var()
+      var _$_ = match.var
       var p = pattern(
         match(1,_$_,3,_$_),function(x,y){return x+y}
       );
       assert.equal(6, p(1,2,3,4));
     });
     it('should catch all with all', function () {
-      var ALL = match.all()
+      var ALL = match.all
       var p = pattern(
         match(1),function(){return "notcount"},
         match(1,2),function(){return "count"},
@@ -129,9 +142,9 @@ describe('pattern', function() {
       assert.equal("last", p(4,4,2));
     });
     it('test all basic', function () {
-      var _$_ = match.var()
-      var __ = match.any();
-      var ALL = match.all()
+      var _$_ = match.var
+      var __ = match.any
+      var ALL = match.all
       var p = pattern(
         match(1,_$_,4),function(x){return 2*x},
         match(1,__,3),function(){return "any"},
@@ -142,9 +155,9 @@ describe('pattern', function() {
       assert.equal("all", p(1123123));
     });
     it('test empty lists', function () {
-      var _$_ = match.var()
-      var __ = match.any();
-      var ALL = match.all()
+      var _$_ = match.var
+      var __ = match.any
+      var ALL = match.all
       var ARRAY = match.array
       var p = pattern(
         match(1,ARRAY()),function(){return "found"}
@@ -152,9 +165,9 @@ describe('pattern', function() {
       assert.equal("found", p(1,[]));
     })
     it('test simple lists', function () {
-      var _$_ = match.var()
-      var __ = match.any();
-      var ALL = match.all()
+      var _$_ = match.var
+      var __ = match.any
+      var ALL = match.all
       var ARRAY = match.array
       var p = pattern(
         match(1,ARRAY(2,3,4),5),function(){return "found"}
@@ -162,9 +175,9 @@ describe('pattern', function() {
       assert.equal("found", p(1,[2,3,4],5));
     })
     it('test variable from simple lists', function () {
-      var _$_ = match.var()
-      var __ = match.any();
-      var ALL = match.all()
+      var _$_ = match.var
+      var __ = match.any
+      var ALL = match.all
       var ARRAY = match.array
       var p = pattern(
         match(1,ARRAY(2,_$_,4),5),function(x){return x}
@@ -172,14 +185,60 @@ describe('pattern', function() {
       assert.equal(3, p(1,[2,3,4],5));
     })
     it('test variables from mixed lists', function () {
-      var _$_ = match.var()
-      var __ = match.any();
-      var ALL = match.all()
+      var _$_ = match.var
+      var __ = match.any
+      var ALL = match.all
       var ARRAY = match.array
       var p = pattern(
         match(_$_,ARRAY(2,_$_,4),ARRAY(2,2,_$_)),function(a,b,c){return a+b+c}
       );
       assert.equal(19, p(4,[2,10,4],[2,2,5]));
+    })
+    it('test literals', function () {
+      var _$_ = match.var
+      var __ = match.any
+      var ALL = match.all
+      var ARRAY = match.array
+
+      var p = pattern(
+        match(null),        function(){return "found null"},
+        match(undefined),   function(){return "found undefined"},
+        match(42),          function(){return "life"},
+        match("foo"),       function(){return "bar"},
+        match("ha","ha"),   function(){return "laugh"},
+        match(ALL),         function(){return "everything else"}
+      );
+      assert.equal("found null", p(null));
+      assert.equal("found undefined", p(undefined));
+      assert.equal("life", p(42));
+      assert.equal("bar", p("foo"));
+      assert.equal("laugh", p("ha","ha"));
+      assert.equal("everything else", p("jabberwocky"));
+    })
+    it('test placeholders', function () {
+      var _$_ = match.var
+      var __ = match.any
+      var ALL = match.all
+      var ARRAY = match.array
+
+      var p = pattern(
+        match("beginning",__,"end"),function(){return "match"}
+      );
+      assert.equal("match", p("beginning","my story","end"));
+      assert.equal("match", p("beginning","their story","end"));
+    })
+    it('test variables', function () {
+      var _$_ = match.var
+      var __ = match.any
+      var ALL = match.all
+      var ARRAY = match.array
+
+      var p = pattern(
+        match("hello",_$_),function(name){return "goodbye "+name},
+        match(1,__,_$_),function(x){return x}
+      );
+      assert.equal("goodbye richard", p("hello","richard"));
+      assert.equal(3, p(1,2,3));
     })
     /*it('should fail identification', function () {
       var _$_ = match.var()
