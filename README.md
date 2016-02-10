@@ -20,12 +20,13 @@ var p = pattern(
   match("ha","ha"),   ()=>"laugh",
   match(ALL),         ()=>"everything else"
 );
-p(null) //"found null"
-p(undefined) //"found undefined"
-p(42) //"life"
-p("foo") //"bar"
-p("ha","ha") //"laugh"
-p("jabberwocky") //"everything else"
+
+p(null)           //"found null"
+p(undefined)      //"found undefined"
+p(42)             //"life"
+p("foo")          //"bar"
+p("ha","ha")      //"laugh"
+p("jabberwocky")  //"everything else"
 ```
 
 ##Placeholders
@@ -36,8 +37,9 @@ Place holders let you ignore certain arguments
 var p = pattern(
   match("beginning",__,"end"), ()=>"match"
 );
-p("beginning","my story","end") //"match"
-p("beginning","their story story","end") //"match"
+
+p("beginning","my story","end")           //"match"
+p("beginning","their story story","end")  //"match"
 ```
 ##Variables
 
@@ -48,6 +50,7 @@ var p = pattern(
   match("hello",_$_), (name)=>"goodbye "+name,
   match(1,__,_$_),    (x)=>x
 );
-p("hello","richard") //"goodbye richard"
-p(1,2,3) //3
+
+p("hello","richard")  //"goodbye richard"
+p(1,2,3)              //3
 ```
