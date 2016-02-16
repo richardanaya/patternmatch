@@ -30,14 +30,29 @@ describe('match', function() {
       assert.equal(true, matcher("hey").result);
       assert.equal(false, matcher("bro").result);
     });
-    /*it('should match rest at end', function () {
+    it('should match rest at end', function () {
       var matcher = match(1,REST);
       assert.equal(true, matcher(1).result);
-      /*assert.equal(true, matcher(1,2).result);
-      assert.equal(true, matcher(1,2,3).result);
       assert.equal(false, matcher(2).result);
+      assert.equal(true, matcher(1,2).result);
+      assert.equal(true, matcher(1,2,3).result);
       assert.equal(false, matcher(2,1).result);
-    });*/
+    });
+    it('should match rest at beginning', function () {
+      var matcher = match(REST,1);
+      assert.equal(true, matcher(1).result);
+      assert.equal(false, matcher(2).result);
+      assert.equal(true, matcher(2,1).result);
+      assert.equal(true, matcher(3,2,1).result);
+      assert.equal(false, matcher(1,2,3).result);
+    });
+    it('should match rest at middle', function () {
+      var matcher = match(1,REST,3);
+      assert.equal(false, matcher(1).result);
+      assert.equal(false, matcher(1,2).result);
+      assert.equal(true, matcher(1,2,3).result);
+      assert.equal(true, matcher(1,2,2,3).result);
+    });
     it('should throw exception with no definition', function () {
       assert.throws(function() { match() }, Error);
     });
@@ -212,17 +227,6 @@ describe('pattern', function() {
       );
       assert.equal("goodbye richard", p("hello","richard"));
       assert.equal(3, p(1,2,3));
-    })
-    it('test within a class', function () {
-      var MyClass = function(){
-          this.name = "Richard"
-      }
-      MyClass.prototype.greet = pattern(
-        match("hello"),function(){return this.name;}
-      );
-
-      var m = new MyClass();
-      assert.equal("Richard", m.greet("hello"));
     })
     it('test within a class', function () {
       var MyClass = function(){
