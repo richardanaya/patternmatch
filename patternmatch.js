@@ -56,6 +56,7 @@
   match.any = function(){return {result:true}}
   match.var = function(){return {result:true,variables:arguments[0]}}
   match.all = {______MATCH_ALL_____:true}
+  match.rest = {______REST_____:true}
   match.array = function(){
     var arrayParams = arguments;
     if(arrayParams.length == 0){
