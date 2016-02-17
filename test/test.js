@@ -7,6 +7,7 @@ var __ = match.any;
 var ALL = match.all;
 var ARRAY = match.array;
 var REST = match.rest;
+var _REST_ = match.restVar;
 
 describe('match', function() {
   describe('#()', function () {
@@ -52,6 +53,11 @@ describe('match', function() {
       assert.equal(false, matcher(1,2).result);
       assert.equal(true, matcher(1,2,3).result);
       assert.equal(true, matcher(1,2,2,3).result);
+    });
+    it('should match rest alone', function () {
+      var matcher = match(REST);
+      assert.equal(true, matcher(1).result);
+      assert.equal(true, matcher(1,2,3).result);
     });
     it('should throw exception with no definition', function () {
       assert.throws(function() { match() }, Error);
@@ -227,6 +233,14 @@ describe('pattern', function() {
       );
       assert.equal("goodbye richard", p("hello","richard"));
       assert.equal(3, p(1,2,3));
+    })
+    it('test rest', function () {
+      var p = pattern(
+        match(12,REST),function(name){return "12 rest"},
+        match(REST,_$_),function(x){return "Ending variable "+x}
+      );
+      assert.equal("12 rest", p(12,1,2,3));
+      assert.equal("Ending variable 3", p(1,2,3));
     })
     it('test within a class', function () {
       var MyClass = function(){
