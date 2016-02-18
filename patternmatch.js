@@ -4,7 +4,7 @@
 
 (function (window, module) {
   "use strict";
-  function pattern(){
+  function match(){
     var patternArguments = arguments;
     return function(){
         for(var i = 0 ; i < patternArguments.length; i+=2){
@@ -23,14 +23,14 @@
     return !!(obj && obj.constructor && obj.call && obj.apply);
   };
 
-  var match = function(){
+  var pattern = function(){
     var matchParams = Array.prototype.slice.call(arguments);
     if(matchParams.length==0){throw Error("match requires definition")}
     return function(){
       var firstMatchParam = matchParams[0];
       if(firstMatchParam!==null &&firstMatchParam!==undefined &&
         firstMatchParam.______MATCH_ALL_____==true){return {result:true}}
-      var restIndex = matchParams.indexOf(match.rest)
+      var restIndex = matchParams.indexOf(pattern.rest)
       if(restIndex==-1&&arguments.length!=matchParams.length){return {result: false}}
 
       var results = []
@@ -71,11 +71,11 @@
       return {result:true, variables:variables};
     }
   }
-  match.any = function(){return {result:true}}
-  match.var = function(){return {result:true,variables:arguments[0]}}
-  match.all = {______MATCH_ALL_____:true}
-  match.rest = {______REST_____:true}
-  match.array = function(){
+  pattern.any = function(){return {result:true}}
+  pattern.var = function(){return {result:true,variables:arguments[0]}}
+  pattern.all = {______MATCH_ALL_____:true}
+  pattern.rest = {______REST_____:true}
+  pattern.array = function(){
     var arrayParams = arguments;
     if(arrayParams.length == 0){
       return function(a){
@@ -87,7 +87,7 @@
     }
     else {
       return function(){
-        return match.apply(this,arrayParams).apply(this,arguments[0])
+        return pattern.apply(this,arrayParams).apply(this,arguments[0])
       }
     }
   }
