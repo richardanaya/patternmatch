@@ -5,17 +5,17 @@
 (function (window, module) {
   "use strict";
   function match(){
-    var patternArguments = arguments;
+    var matchArguments = arguments;
     return function(){
-        for(var i = 0 ; i < patternArguments.length; i+=2){
-          var matcher = patternArguments[i];
-          var evaluator = patternArguments[i+1];
-          var o = matcher.apply(this,arguments);
+        for(var i = 0 ; i < matchArguments.length; i+=2){
+          var pattern = matchArguments[i];
+          var evaluator = matchArguments[i+1];
+          var o = pattern.apply(this,arguments);
           if(o.result){
             return evaluator.apply(this,o.variables);
           }
         }
-        throw Error("Pattern did not match!")
+        throw Error("Did not match any pattern!")
     }
   }
 
@@ -24,37 +24,37 @@
   };
 
   var pattern = function(){
-    var matchParams = Array.prototype.slice.call(arguments);
-    if(matchParams.length==0){throw Error("match requires definition")}
+    var patternParams = Array.prototype.slice.call(arguments);
+    if(patternParams.length==0){throw Error("Pattern requires definition!")}
     return function(){
-      var firstMatchParam = matchParams[0];
+      var firstMatchParam = patternParams[0];
       if(firstMatchParam!==null &&firstMatchParam!==undefined &&
         firstMatchParam.______MATCH_ALL_____==true){return {result:true}}
-      var restIndex = matchParams.indexOf(pattern.rest)
-      if(restIndex==-1&&arguments.length!=matchParams.length){return {result: false}}
+      var restIndex = patternParams.indexOf(pattern.rest)
+      if(restIndex==-1&&arguments.length!=patternParams.length){return {result: false}}
 
       var results = []
       var argumentsBeforeRest = arguments.length;
       var argumentsAfterRest = 0;
       if(restIndex != -1){
         argumentsBeforeRest = restIndex;
-        argumentsAfterRest = matchParams.length-1-restIndex;
+        argumentsAfterRest = patternParams.length-1-restIndex;
         if(arguments.length<argumentsBeforeRest+argumentsAfterRest){return {result: false}}
       }
 
       for(var i=0;i<argumentsBeforeRest;i++){
-        if(isFunction(matchParams[i])){
-          results.push(matchParams[i](arguments[i]))
+        if(isFunction(patternParams[i])){
+          results.push(patternParams[i](arguments[i]))
         }
-        else if(arguments[i]!==matchParams[i]){
+        else if(arguments[i]!==patternParams[i]){
           results.push({result:false})
         }
       }
       for(var i=0;i<argumentsAfterRest;i++){
-        if(isFunction(matchParams[matchParams.length-argumentsAfterRest+i])){
-          results.push(matchParams[matchParams.length-argumentsAfterRest+i](arguments[arguments.length-argumentsAfterRest+i]))
+        if(isFunction(patternParams[patternParams.length-argumentsAfterRest+i])){
+          results.push(patternParams[patternParams.length-argumentsAfterRest+i](arguments[arguments.length-argumentsAfterRest+i]))
         }
-        else if(arguments[arguments.length-argumentsAfterRest+i]!==matchParams[matchParams.length-argumentsAfterRest+i]){
+        else if(arguments[arguments.length-argumentsAfterRest+i]!==patternParams[patternParams.length-argumentsAfterRest+i]){
           results.push({result:false})
         }
       }
