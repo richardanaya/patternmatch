@@ -2,7 +2,162 @@ var assert = require('assert');
 var patternmatch = require("../patternmatch");
 var match = patternmatch.match;
 var pattern = patternmatch.pattern;
-var _$_ = pattern.var;
+var PatternBuilder = patternmatch.PatternBuilder;
+var __ = patternmatch.__;
+var _$_ = patternmatch._$_;
+
+describe('match', function() {
+  it('should throw if used empty', function () {
+    var m = match();
+    assert.throws(function() { m(); }, Error);
+  });
+  it('should test match and execute function when matches true', function () {
+    var mockPattern = function(){
+      return {
+        matches:true
+      }
+    }
+    var m = match(
+      mockPattern,function(){return "life"}
+    );
+    assert.equal("life", m());
+  });
+  it('should test match and execute function when matches false', function () {
+    var mockPattern = function(){
+      return {
+        matches:false
+      }
+    }
+    var m = match(
+      mockPattern,function(){return "life"}
+    );
+    assert.throws(function() { m(); }, Error);
+  });
+  it('should pass along variables function when matches true', function () {
+    var mockPattern = function(){
+      return {
+        matches:true,
+        variables:["Hello World"]
+      }
+    }
+    var m = match(
+      mockPattern,function(x){return x;}
+    );
+    assert.equal("Hello World", m());
+  });
+  it('should handle multiple patterns', function () {
+    var mockPattern = function(){
+      return {
+        matches:false,
+        variables:["Foo"]
+      }
+    }
+    var mockPattern2 = function(){
+      return {
+        matches:true,
+        variables:["Bar"]
+      }
+    }
+    var m = match(
+      mockPattern,function(x){return x;},
+      mockPattern2,function(x){return x;}
+    );
+    assert.equal("Bar", m());
+  });
+  it('should fail multiple patterns', function () {
+    var mockPattern = function(){
+      return {
+        matches:false,
+        variables:["Foo"]
+      }
+    }
+    var mockPattern2 = function(){
+      return {
+        matches:false,
+        variables:["Bar"]
+      }
+    }
+    var m = match(
+      mockPattern,function(x){return x;},
+      mockPattern2,function(x){return x;}
+    );
+    assert.throws(function() { m(); }, Error);
+  });
+})
+
+describe('pattern', function() {
+  it('should have definition', function () {
+    assert.throws(function() { pattern(); }, Error);
+  });
+  it('should match single', function () {
+    var p = pattern(42);
+    assert.equal(true, p(42).matches);
+  });
+  it('should fail a match', function () {
+    var p = pattern(42);
+    assert.equal(false, p(43).matches);
+  });
+  it('should match multiple', function () {
+    var p = pattern(1,2);
+    assert.equal(true, p(1,2).matches);
+  });
+  it('should fail match multiple', function () {
+    var p = pattern(1,2);
+    assert.equal(false, p(1,3).matches);
+  });
+  it('should fail non matching lengths', function () {
+    var p = pattern(1,2);
+    assert.equal(false, p(1,2,3).matches);
+  });
+  it('should match single custom equal processor', function () {
+    var b = new PatternBuilder().equals(42)
+    var p = pattern(b);
+    assert.equal(true, p(42).matches);
+  });
+  it('should match any processor', function () {
+    var b = new PatternBuilder().any()
+    var p = pattern(b);
+    assert.equal(true, p(42).matches);
+    assert.equal(true, p("").matches);
+  });
+  it('should match var processor', function () {
+    var b = new PatternBuilder().var()
+    var p = pattern(b);
+    assert.equal(false, p().matches);
+    var b = new PatternBuilder().equals(42).var()
+    var p = pattern(b);
+    assert.equal(true, p(42).matches);
+    assert.equal(42, p(42).variables[0]);
+    var b1 = new PatternBuilder().equals(1).var()
+    var b2 = new PatternBuilder().any().var()
+    var b3 = new PatternBuilder().equals(3).var()
+    var p = pattern(b1,b2,b3);
+    assert.equal(true, p(1,2,3).matches);
+    assert.equal(1, p(1,2,3).variables[0]);
+    assert.equal(2, p(1,2,3).variables[1]);
+    assert.equal(4, p(1,4,3).variables[1]);
+    assert.equal(3, p(1,2,3).variables[2]);
+  });
+  it('should match __ as any()', function () {
+    var p = pattern(__);
+    assert.equal(true, p(42).matches);
+    assert.equal(true, p("").matches);
+  });
+  it('should match _$_ as any().var()', function () {
+    var p = pattern(_$_);
+    assert.equal(true, p(42).matches);
+    assert.equal(42, p(42).variables[0]);
+  });
+  /*it('should match rest', function () {
+    var b = new PatternBuilder().rest();
+    var p = pattern(b);
+    assert.equal(true, p(1).matches);
+    assert.equal(true, p(1,2,3).matches);
+    assert.equal(true, p(0).matches);
+  });*/
+})
+
+/*var _$_ = pattern.var;
 var __ = pattern.any;
 var ALL = pattern.all;
 var ARRAY = pattern.array;
@@ -253,14 +408,6 @@ describe('match', function() {
       var m = new MyClass();
       assert.equal("Richard", m.greet("hello"));
     })
-    /*it('should fail identification', function () {
-      var _$_ = match.var()
-      var __ = match.any()
-      var p = pattern(
-        match(1,_$_,3,_$_),function(x,y){return x+y},
-        match(__),function(){return "nicesave"}
-      );
-      assert.equal("nicesave", p(1,2,2,4));
-    });*/
   });
 });
+*/
