@@ -5,6 +5,8 @@ var pattern = patternmatch.pattern;
 var PatternBuilder = patternmatch.PatternBuilder;
 var __ = patternmatch.__;
 var _$_ = patternmatch._$_;
+var _REST_ = patternmatch._REST_;
+var _$REST_ = patternmatch._$REST_;
 
 describe('match', function() {
   it('should throw if used empty', function () {
@@ -148,13 +150,32 @@ describe('pattern', function() {
     assert.equal(true, p(42).matches);
     assert.equal(42, p(42).variables[0]);
   });
-  /*it('should match rest', function () {
+  it('should match rest', function () {
     var b = new PatternBuilder().rest();
     var p = pattern(b);
     assert.equal(true, p(1).matches);
     assert.equal(true, p(1,2,3).matches);
     assert.equal(true, p(0).matches);
-  });*/
+  });
+  it('should match _REST_ as rest()', function () {
+    var p = pattern(_REST_);
+    assert.equal(true, p(1).matches);
+    assert.equal(true, p(1,2,3).matches);
+    assert.equal(true, p(0).matches);
+  });
+  it('should match rest at end', function () {
+    var p = pattern(1,_REST_);
+    assert.equal(true, p(1).matches);
+    assert.equal(true, p(1,2,3).matches);
+    assert.equal(false, p(0).matches);
+  });
+  it('should match rest at beginning', function () {
+    var p = pattern(_REST_,1);
+    assert.equal(true, p(1).matches);
+    assert.equal(true, p(2,3,1).matches);
+    assert.equal(false, p(0).matches);
+    assert.equal(false, p(2,3,2).matches);
+  });
 })
 
 /*var _$_ = pattern.var;

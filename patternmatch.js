@@ -50,7 +50,15 @@
       }
       var finalResult = {matches:true,variables:[]}
 
-      for(var i=0;i<processors.length;i++){
+      var argumentsBeforeRest = arguments.length;
+      var argumentsAfterRest = 0;
+      if(restIndex != -1){
+        argumentsBeforeRest = restIndex;
+        argumentsAfterRest = patternParams.length-1-restIndex;
+        if(arguments.length<argumentsBeforeRest+argumentsAfterRest){return {result: false}}
+      }
+
+      for(var i=0;i<argumentsBeforeRest;i++){
         var processor = processors[i];
         var result = processor.process(callParams[i]);
         //if we fail a match, stop early
@@ -66,7 +74,22 @@
           }
         }
       }
-
+      for(var i=0;i<argumentsAfterRest;i++){
+        var processor = processors[processors.length-argumentsAfterRest+i];
+        var result = processor.process(callParams[callParams.length-argumentsAfterRest+i]);
+        //if we fail a match, stop early
+        if(result.matches==false){
+          return {matches:false}
+        }
+        else {
+          //combine variables into final result
+          if(result.variables){
+            for(var j=0;j<result.variables.length;j++){
+              finalResult.variables.push(result.variables[j])
+            }
+          }
+        }
+      }
 
       return finalResult;
     }
@@ -99,9 +122,7 @@
     return this;
   }
   PatternBuilder.prototype.rest = function(){
-    this.processors.push(function(){
-      this.target = PatternBuilder.REST;
-    })
+    this.target = PatternBuilder.REST;
     return this;
   }
   PatternBuilder.prototype.var = function(){
