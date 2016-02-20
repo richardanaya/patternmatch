@@ -55,7 +55,7 @@
       if(restIndex != -1){
         argumentsBeforeRest = restIndex;
         argumentsAfterRest = patternParams.length-1-restIndex;
-        if(arguments.length<argumentsBeforeRest+argumentsAfterRest){return {result: false}}
+        if(arguments.length<argumentsBeforeRest+argumentsAfterRest){return {matches: false}}
       }
 
       for(var i=0;i<argumentsBeforeRest;i++){
@@ -74,9 +74,14 @@
           }
         }
       }
-      for(var i=0;i<argumentsAfterRest;i++){
-        var processor = processors[processors.length-argumentsAfterRest+i];
-        var result = processor.process(callParams[callParams.length-argumentsAfterRest+i]);
+      if(restIndex != -1){
+        //Gather Rest
+        var restParams = [];
+        for(var i=argumentsBeforeRest;i<callParams.length-argumentsAfterRest;i++){
+          restParams.push(callParams[i])
+        }
+        //Process Rest
+        var result = processors[argumentsBeforeRest].process(restParams)
         //if we fail a match, stop early
         if(result.matches==false){
           return {matches:false}
@@ -86,6 +91,24 @@
           if(result.variables){
             for(var j=0;j<result.variables.length;j++){
               finalResult.variables.push(result.variables[j])
+            }
+          }
+        }
+
+        //After Rest
+        for(var i=0;i<argumentsAfterRest;i++){
+          var processor = processors[processors.length-argumentsAfterRest+i];
+          var result = processor.process(callParams[callParams.length-argumentsAfterRest+i]);
+          //if we fail a match, stop early
+          if(result.matches==false){
+            return {matches:false}
+          }
+          else {
+            //combine variables into final result
+            if(result.variables){
+              for(var j=0;j<result.variables.length;j++){
+                finalResult.variables.push(result.variables[j])
+              }
             }
           }
         }
@@ -123,6 +146,7 @@
   }
   PatternBuilder.prototype.rest = function(){
     this.target = PatternBuilder.REST;
+    this.matches = true;
     return this;
   }
   PatternBuilder.prototype.var = function(){

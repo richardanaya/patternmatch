@@ -176,6 +176,27 @@ describe('pattern', function() {
     assert.equal(false, p(0).matches);
     assert.equal(false, p(2,3,2).matches);
   });
+  it('should match rest at middle', function () {
+    var p = pattern(1,_REST_,3);
+    assert.equal(false, p(1).matches);
+    assert.equal(false, p(1,2).matches);
+    assert.equal(true, p(1,3).matches);
+    assert.equal(true, p(1,2,3).matches);
+    assert.equal(true, p(1,2,2,2,3).matches);
+    assert.equal(false, p(1,2,2,2,2).matches);
+  });
+  it('should match rest().var() at end', function () {
+    var p = pattern(1,_$REST_);
+    assert.equal(true, p(1).matches);
+    assert.equal(1, p(1).variables.length);
+    assert.equal(0, p(1).variables[0].length);
+    assert.equal(true, p(1,2).matches);
+    assert.equal(1, p(1,2).variables.length);
+    assert.equal(1, p(1,2).variables[0].length);
+    assert.equal(true, p(1,2,3).matches);
+    assert.equal(1, p(1,2,3).variables.length);
+    assert.equal(2, p(1,2,3).variables[0].length);
+  });
 })
 
 /*var _$_ = pattern.var;
