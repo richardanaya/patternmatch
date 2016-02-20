@@ -7,6 +7,10 @@ var __ = patternmatch.__;
 var _$_ = patternmatch._$_;
 var _REST_ = patternmatch._REST_;
 var _$REST_ = patternmatch._$REST_;
+var _NUMBER_ = patternmatch._NUMBER_;
+var _$NUMBER_ = patternmatch._$NUMBER_;
+var _STRING_ = patternmatch._STRING_;
+var _$STRING_ = patternmatch._$STRING_;
 
 describe('match', function() {
   it('should throw if used empty', function () {
@@ -196,6 +200,38 @@ describe('pattern', function() {
     assert.equal(true, p(1,2,3).matches);
     assert.equal(1, p(1,2,3).variables.length);
     assert.equal(2, p(1,2,3).variables[0].length);
+  });
+  it('should match on type', function () {
+    var b = new PatternBuilder().isType("number")
+    var p = pattern(b);
+    assert.equal(true, p(1).matches);
+    assert.equal(false, p("hey").matches);
+    var b = new PatternBuilder().isType("string")
+    var p = pattern(b);
+    assert.equal(false, p(1).matches);
+    assert.equal(true, p("hey").matches);
+  });
+  it('should match with _NUMBER_ as isType("number")', function () {
+    var p = pattern(_NUMBER_);
+    assert.equal(true, p(1).matches);
+    assert.equal(false, p("hey").matches);
+  });
+  it('should match with _STRING_ as isType("string")', function () {
+    var p = pattern(_STRING_);
+    assert.equal(false, p(1).matches);
+    assert.equal(true, p("hey").matches);
+  });
+  it('should match with _$NUMBER_ as isType("number").var()', function () {
+    var p = pattern(_$NUMBER_);
+    assert.equal(true, p(1).matches);
+    assert.equal(1, p(1).variables[0]);
+    assert.equal(false, p("hey").matches);
+  });
+  it('should match with _$STRING_ as isType("string").var()', function () {
+    var p = pattern(_$STRING_);
+    assert.equal(false, p(1).matches);
+    assert.equal(true, p("hey").matches);
+    assert.equal("hey", p("hey").variables[0]);
   });
 })
 

@@ -155,6 +155,12 @@
     })
     return this;
   }
+  PatternBuilder.prototype.isType = function(type){
+    this.processors.push(function(x){
+      this.matches = typeof(x)==type;
+    })
+    return this;
+  }
       /*var firstMatchParam = patternParams[0];
       if(firstMatchParam!==null &&firstMatchParam!==undefined &&
         firstMatchParam.______MATCH_ALL_____==true){return {result:true}}
@@ -227,7 +233,11 @@
     __ : new PatternBuilder().any(),
     _$_ : new PatternBuilder().any().var(),
     _REST_ : new PatternBuilder().rest(),
-    _$REST_ : new PatternBuilder().rest().var()
+    _$REST_ : new PatternBuilder().rest().var(),
+    _NUMBER_ :  new PatternBuilder().isType("number"),
+    _$NUMBER_ :  new PatternBuilder().isType("number").var(),
+    _STRING_ :  new PatternBuilder().isType("string"),
+    _$STRING_ :  new PatternBuilder().isType("string").var()
   };
 })(
   typeof window !== "undefined" ? window : {},
