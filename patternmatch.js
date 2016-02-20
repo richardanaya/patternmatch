@@ -161,70 +161,28 @@
     })
     return this;
   }
-      /*var firstMatchParam = patternParams[0];
-      if(firstMatchParam!==null &&firstMatchParam!==undefined &&
-        firstMatchParam.______MATCH_ALL_____==true){return {result:true}}
-      var restIndex = patternParams.indexOf(pattern.rest)
-      if(restIndex==-1&&arguments.length!=patternParams.length){return {result: false}}
-
-      var results = []
-      var argumentsBeforeRest = arguments.length;
-      var argumentsAfterRest = 0;
-      if(restIndex != -1){
-        argumentsBeforeRest = restIndex;
-        argumentsAfterRest = patternParams.length-1-restIndex;
-        if(arguments.length<argumentsBeforeRest+argumentsAfterRest){return {result: false}}
-      }
-
-      for(var i=0;i<argumentsBeforeRest;i++){
-        if(isFunction(patternParams[i])){
-          results.push(patternParams[i](arguments[i]))
-        }
-        else if(arguments[i]!==patternParams[i]){
-          results.push({result:false})
-        }
-      }
-      for(var i=0;i<argumentsAfterRest;i++){
-        if(isFunction(patternParams[patternParams.length-argumentsAfterRest+i])){
-          results.push(patternParams[patternParams.length-argumentsAfterRest+i](arguments[arguments.length-argumentsAfterRest+i]))
-        }
-        else if(arguments[arguments.length-argumentsAfterRest+i]!==patternParams[patternParams.length-argumentsAfterRest+i]){
-          results.push({result:false})
-        }
-      }
-
-      var variables = []
-      for(var j=0;j<results.length;j++){
-        if(results[j].result==false){
-          return {result:false};
-        }
-        if(results[j].variables){
-          variables = variables.concat(results[j].variables)
-        }
-      }
-      return {result:true, variables:variables};
-    }
-  }
-  pattern.any = function(){return {result:true}}
-  pattern.var = function(){return {result:true,variables:arguments[0]}}
-  pattern.all = function(){return {______MATCH_ALL_____:true}}
-  pattern.rest = function(){return {______REST_____:true}}
-  pattern.array = function(){
+  PatternBuilder.prototype.array = function(){
     var arrayParams = arguments;
-    if(arrayParams.length == 0){
-      return function(a){
+    this.processors.push(function(a){
+      if(!Array.isArray(a)){
+          return this.matches = false;
+      }
+      else if(arrayParams.length == 0){
         if(a.length==0){
-          return {result:true}
+          this.matches = true;
         }
-        return {result:false}
+        else {
+          this.matches = false;
+        }
       }
-    }
-    else {
-      return function(){
-        return pattern.apply(this,arrayParams).apply(this,arguments[0])
+      else {
+        var result = pattern.apply(this,arrayParams).apply(this,a);
+        this.matches = result.matches;
+        this.variables = result.variables;
       }
-    }
-  }*/
+    })
+    return this;
+  }  
 
   window.patternmatch = module.exports = {
     pattern  : pattern,
@@ -237,7 +195,17 @@
     _NUMBER_ :  new PatternBuilder().isType("number"),
     _$NUMBER_ :  new PatternBuilder().isType("number").var(),
     _STRING_ :  new PatternBuilder().isType("string"),
-    _$STRING_ :  new PatternBuilder().isType("string").var()
+    _$STRING_ :  new PatternBuilder().isType("string").var(),
+    ARRAY :  function(){
+      var args = Array.prototype.slice.call(arguments);
+      var pb = new PatternBuilder()
+      return pb.array.apply(pb,args);
+    },
+    $ARRAY :  function(){
+      var args = Array.prototype.slice.call(arguments);
+      var pb = new PatternBuilder()
+      return pb.array.apply(pb,args).var();
+    }
   };
 })(
   typeof window !== "undefined" ? window : {},
