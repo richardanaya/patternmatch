@@ -26,7 +26,7 @@
   var pattern = function(){
     var patternParams = Array.prototype.slice.call(arguments);
     var processors = patternParams.map(function(x){
-      if(x.___PROCESSOR___){
+      if(x!=null && x!=undefined && x.___PROCESSOR___){
         return x;
       }
       else {
@@ -182,7 +182,7 @@
       }
     })
     return this;
-  }  
+  }
 
   window.patternmatch = module.exports = {
     pattern  : pattern,

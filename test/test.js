@@ -266,4 +266,14 @@ describe('pattern', function() {
     assert.equal(2, p([1,2,3]).variables[0][1]);
     assert.equal(3, p([1,2,3]).variables[0][2]);
   });
+  it('should match null', function () {
+    var p = pattern(null);
+    assert.equal(true, p(null).matches);
+    assert.equal(false, p(1).matches);
+  });
+  it('should match undefined', function () {
+    var p = pattern(undefined);
+    assert.equal(true, p(undefined).matches);
+    assert.equal(false, p(1).matches);
+  });
 })
