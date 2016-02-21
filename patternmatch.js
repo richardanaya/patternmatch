@@ -129,6 +129,9 @@
   PatternBuilder.prototype.process = function(x){
     for(var i=0;i<this.processors.length;i++){
       this.processors[i].call(this,x)
+      if(this.matches == false){
+        return this;
+      }
     }
     return this;
   }

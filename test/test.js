@@ -284,4 +284,16 @@ describe('pattern', function() {
     assert.equal(true, p([1,2,3,4]).matches);
     assert.equal(false, p([1]).matches);
   });
+  it('should match when condition', function () {
+    var p = pattern(_NUMBER_.when(function(x){return x>3}));
+    assert.equal(true, p(5).matches);
+    assert.equal(false, p(1).matches);
+    var p = pattern(ARRAY(1,_REST_).when(function(x){return x.length>3}));
+    assert.equal(true, p([1,2,3,4]).matches);
+    assert.equal(false, p([1]).matches);
+  });
+  it('should fail match condition immediately', function () {
+    var p = pattern(_NUMBER_.when(function(x){return true}));
+    assert.equal(false, p("Hello").matches);
+  });
 })
