@@ -48,8 +48,8 @@ p("jabberwocky")  //"everything else"
 Place holders let you ignore certain arguments
 
 ```javascript
-var p = match(
-  pattern("beginning",__,"end"), ()=>"match"
+var p = patternmatch(
+  ["beginning",__,"end"], "match"
 );
 
 p("beginning","my story","end")           //"match"
@@ -60,9 +60,9 @@ p("beginning","their story story","end")  //"match"
 Extract variables out of a pattern
 
 ```javascript
-var p = match(
-  pattern("hello",_$_), (name)=>"goodbye "+name,
-  pattern(1,__,_$_),    (x)=>x
+var p = patternmatch(
+  ["hello", _$_],   (name)=>"goodbye "+name,
+  [1, __, _$_],     (x)=>x
 );
 
 p("hello","richard")  //"goodbye richard"
