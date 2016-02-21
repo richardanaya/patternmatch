@@ -20,17 +20,18 @@ Let's look at some cool stuff we can pattern match!
 
 ##Literals
 ```javascript
-var {pattern,match} = require("patternmatch");
+var patternmatch = require("patternmatch");
 //Gather pattern matching symbols
-var [_$_,__,ALL,ARRAY] = [pattern.var,pattern.any,pattern.all,pattern.array];
+var [_$_,__,ALL,ARRAY] = [patternmatch.var,patternmatch.any,patternmatch.all,patternmatch.array];
 
-var p = match(
-  pattern(null),        ()=>"found null",
-  pattern(undefined),   ()=>"found undefined",
-  pattern(42),          ()=>"life",
-  pattern("foo"),       ()=>"bar",
-  pattern("ha","ha"),   ()=>"laugh",
-  pattern(ALL),         ()=>"everything else"
+var p = patternmatch(
+  [null],        "found null",
+  [undefined],   "found undefined",
+  [42],          "life",
+  ["foo"],       "bar",
+  ["ha","ha"],   "laugh",
+  [3,2,1],       "count down",
+  [ALL],         "everything else"
 );
 
 p(null)           //"found null"
@@ -38,6 +39,7 @@ p(undefined)      //"found undefined"
 p(42)             //"life"
 p("foo")          //"bar"
 p("ha","ha")      //"laugh"
+p(3,2,1)          //"count down"
 p("jabberwocky")  //"everything else"
 ```
 

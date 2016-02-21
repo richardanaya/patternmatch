@@ -95,6 +95,24 @@ describe('match', function() {
     );
     assert.throws(function() { m(); }, Error);
   });
+  it('patternmatch can be used to match', function () {
+    var m = patternmatch(
+      pattern(42),function(){return "life"}
+    );
+    assert.equal("life", m(42));
+  });
+  it('should convert non-function results into functions', function () {
+    var m = patternmatch(
+      pattern(42),"life"
+    );
+    assert.equal("life", m(42));
+  });
+  it('should use array as shorthand for pattern(...)', function () {
+    var m = patternmatch(
+      [42],"life"
+    );
+    assert.equal("life", m(42));
+  });
 })
 
 describe('pattern', function() {

@@ -4,15 +4,35 @@
 
 (function (window, module) {
   "use strict";
+
   function match(){
     var matchArguments = arguments;
+
+    function createResultant(result){
+      return function(){
+        return result;
+      }
+    }
+
+    for(var i = 0 ; i < matchArguments.length; i+=2){
+      var patternEvaluator = matchArguments[i];
+      var resultEvaluator = matchArguments[i+1];
+      //convert [] shorthand into pattern call
+      if(Array.isArray(patternEvaluator)){
+        matchArguments[i]=  pattern.apply(this,patternEvaluator);
+      }
+      //convert non-function resultants into functions that return result
+      if(!isFunction(resultEvaluator)){
+        matchArguments[i+1] = createResultant(resultEvaluator);
+      }
+    }
     return function(){
         for(var i = 0 ; i < matchArguments.length; i+=2){
-          var pattern = matchArguments[i];
-          var evaluator = matchArguments[i+1];
-          var o = pattern.apply(this,arguments);
+          var patternEvaluator = matchArguments[i];
+          var resultEvaluator = matchArguments[i+1];
+          var o = patternEvaluator.apply(this,arguments);
           if(o.matches){
-            return evaluator.apply(this,o.variables);
+            return resultEvaluator.apply(this,o.variables);
           }
         }
         throw Error("Did not match any pattern!")
@@ -224,25 +244,30 @@
     }
   }
 
-  window.patternmatch = module.exports = {
-    pattern  : pattern,
-    match    : match,
-    PatternBuilder : PatternBuilder,
-    __ : new PatternBuilder().any(),
-    _$_ : new PatternBuilder().any().var(),
-    _REST_ : new PatternBuilder().rest(),
-    _$REST_ : new PatternBuilder().rest().var(),
-    _NUMBER_ :  new PatternBuilder().isType("number"),
-    _$NUMBER_ :  new PatternBuilder().isType("number").var(),
-    _STRING_ :  new PatternBuilder().isType("string"),
-    _$STRING_ :  new PatternBuilder().isType("string").var(),
-    _BOOL_ :  new PatternBuilder().isType("boolean"),
-    _$BOOL_ :  new PatternBuilder().isType("boolean").var(),
-    ARRAY :  ARRAY,
-    $ARRAY : $ARRAY,
-    extractor: extractor,
-    ALL: {_______ALL_______:true}
-  };
+  var patternmatch = function(){
+    return match.apply(this,arguments)
+  }
+
+  patternmatch.pattern  = pattern
+  patternmatch.match    = match
+  patternmatch.PatternBuilder = PatternBuilder
+  patternmatch.__ = new PatternBuilder().any()
+  patternmatch._$_ = new PatternBuilder().any().var()
+  patternmatch._REST_ = new PatternBuilder().rest()
+  patternmatch._$REST_ = new PatternBuilder().rest().var()
+  patternmatch._NUMBER_ =  new PatternBuilder().isType("number")
+  patternmatch._$NUMBER_ =  new PatternBuilder().isType("number").var()
+  patternmatch._STRING_ =  new PatternBuilder().isType("string")
+  patternmatch._$STRING_ =  new PatternBuilder().isType("string").var()
+  patternmatch._BOOL_ =  new PatternBuilder().isType("boolean");
+  patternmatch._$BOOL_ =  new PatternBuilder().isType("boolean").var()
+  patternmatch.ARRAY =  ARRAY
+  patternmatch.$ARRAY = $ARRAY
+  patternmatch.extractor= extractor
+  patternmatch.ALL= {_______ALL_______:true}
+
+
+  window.patternmatch = module.exports = patternmatch;
 })(
   typeof window !== "undefined" ? window : {},
   typeof module !== "undefined" ? module : {}
