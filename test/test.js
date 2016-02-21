@@ -95,7 +95,7 @@ describe('match', function() {
     );
     assert.throws(function() { m(); }, Error);
   });
-  it('patternmatch can be used to match', function () {
+  it('should let patternmatch can be used to match', function () {
     var m = patternmatch(
       pattern(42),function(){return "life"}
     );
@@ -112,6 +112,12 @@ describe('match', function() {
       [42],"life"
     );
     assert.equal("life", m(42));
+  });
+  it('should throw error if it is a result', function () {
+    var m = patternmatch(
+      ["BOOM"], Error("EXPLOSION!!!")
+    );
+    assert.throws(function() { m(); }, Error);
   });
 })
 

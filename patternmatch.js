@@ -14,6 +14,12 @@
       }
     }
 
+    function createErrResultant(err){
+      return function(){
+        throw err;
+      }
+    }
+
     for(var i = 0 ; i < matchArguments.length; i+=2){
       var patternEvaluator = matchArguments[i];
       var resultEvaluator = matchArguments[i+1];
@@ -23,7 +29,12 @@
       }
       //convert non-function resultants into functions that return result
       if(!isFunction(resultEvaluator)){
-        matchArguments[i+1] = createResultant(resultEvaluator);
+        if(resultEvaluator instanceof Error){
+          matchArguments[i+1] = createErrResultant(resultEvaluator);
+        }
+        else {
+          matchArguments[i+1] = createResultant(resultEvaluator);
+        }
       }
     }
     return function(){
