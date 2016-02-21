@@ -161,6 +161,12 @@
     })
     return this;
   }
+  PatternBuilder.prototype.when = function(fn){
+    this.processors.push(function(x){
+      this.matches = fn(x);
+    })
+    return this;
+  }
   PatternBuilder.prototype.array = function(){
     var arrayParams = arguments;
     this.processors.push(function(a){
