@@ -59,7 +59,7 @@ p("beginning","their story story","end")  //"match"
 ```
 ##Variables
 
-Extract variables out of a pattern
+Get variables out of a pattern
 
 ```javascript
 var p = patternmatch(
@@ -73,6 +73,8 @@ p(1,2,3)              //3
 
 ##Types
 
+Use type specific symbols (_NUMBER_,_BOOL_,_STRING_) to match based on type
+
 ```javascript
 var add = patternmatch(
   [_$NUMBER_,_$NUMBER_],  (a,b)=>return a+b,
@@ -84,9 +86,68 @@ add(1,2)    //3
 add(1)      //error: Cannot add one number
 add("foo")  //error: Cannot add non number
 ```
+##Partial matching
+
+Match only parts of a pattern with _REST_
+
+```javascript
+var p = patternmatch(
+  [1,_REST_],  "starts with one",
+  [_REST_,3], "ends with 3",
+  [5,_REST_,5], "starts and ends with 5"
+);
+
+p(1,2)    //"starts with one"
+p(1,2,3)    //"starts with one"
+p(3,3,3,3)    //"ends with 3"
+p(5,5)  //"starts and ends with 5"
+p(5,5,5,5)  //"starts and ends with 5"
+```
 
 ##Arrays
+Match within arrays too
+
+```javascript
+var process = patternmatch(
+  ["command",$ARRAY("move",_REST_)], (cmd)=>"move command"+cmd[1],
+  ["command",ARRAY("jump")], "jump command"
+);
+
+process("command",["move","left"])    //"move command left"
+process("command",["move","right"])    //"move command right"
+process("command",["jump"])    //"jump command"
+```
 
 ##When
+Add your own conditions
+
+```javascript
+var setTemperature = patternmatch(
+  [_NUMBER_.when((x)=>x>72), "too hot",
+  [_NUMBER_.when((x)=>x<72), "too cold",
+  [72],                      "just right"
+  [ALL],                     Error("Uhh.. consult the manual")
+);
+
+setTemperature(80) //"too hot"
+setTemperature(60) //"too cold"
+setTemperature(72) //"just right"
+```
 
 ##Extractors
+Handle complex object types by extracting out values so they can easily be matched as if they were arrays
+
+```javascript
+var POINT = extractor(function(pt){
+  return [pt.x,pt.y];
+});
+var isOrigin = patternmatch(
+  [POINT(0,0)],                                             "you found the origin!",
+  [POINT(0,0).when(p=>Math.abs(p[0])<1&&Math.abs(p[1])<1)], "You're so close!",
+  [ALL],                                                    "not the origin"
+);
+
+isOrigin({x:0,y:0}) //"you found the origin!"
+isOrigin({x:0.5,y:0.5}) //"You're so close!"
+isOrigin({x:10,y:10}) //"not the origin"
+```
