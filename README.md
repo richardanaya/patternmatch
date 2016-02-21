@@ -23,10 +23,10 @@ Even written like this, which may be totally suitable, there's alot of condition
 
 ```javascript 
 var fibonacci = patternmatch(
-  [0],          0,
-  [1],          1,
+  [0],                       0,
+  [1],                       1,
   [_$NUMBER_.when(x=>x>1)],  (x)=>fibonacci(x-1)+fibonacci(x-3),
-  [ALL],        Error("Not valid input!")
+  [ALL],                     Error("Not valid input!")
 )
 ```
 
