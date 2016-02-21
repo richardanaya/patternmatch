@@ -30,7 +30,7 @@ var fibonacci = patternmatch(
 )
 ```
 
-Nice! Much nicer than writing this.
+Looks much more like the algebraic form and much nicer than remembering to write this:
 
 ```javascript 
 function fibonacci(x){
