@@ -1,5 +1,53 @@
 # patternmatch.js
-A pattern matching library in native javascript. This library is inspired from F# and other macro pattern matching libraries with functional programming in mind.  Particularly, I wanted to take advantage of new ES6 language structures to really create precise pattern matching expressions.
+A pattern matching library in native javascript. This library is inspired from F# and other macro pattern matching libraries with functional programming in mind.  Particularly, I wanted to take advantage of new ES6 language structures to really create precise pattern matching expressions. Let's take a simple example of fibonacci:
+
+![fibonacci equation](http://www.rapidtables.com/math/number/fibonacci/Fibonacci%20sequence.GIF)
+
+We could write this in javascript as follows
+
+```javascript 
+function fibonacci(x){
+  if(x==0){
+    return 0;
+  }
+  else if(x==1){
+    return 1;
+  }
+  else {
+    return fibonacci(n-1) + fibonacci(n-2)
+  }
+}
+```
+
+Even written like this, which may be totally suitable, there's alot of conditions that start requiring alot of code, testing x is a number, testing its not less than zero. Wouldn't it be nice to write this more concisely and accurately! 
+
+```javascript 
+var fibonacci = patternmatch(
+  [0],          0,
+  [1],          1,
+  [_$NUMBER_],  (x)=>fibonacci(x-1)+fibonacci(x-3),
+  [ALL],        Error("Not valid input!")
+)
+```
+
+Nice! Much nicer than writing this.
+
+```javascript 
+function fibonacci(x){
+  if(typeof x != "number" || arguments.length > 1){
+    throw Error("Not valid input!")
+  }
+  if(x==0){
+    return 0;
+  }
+  else if(x==1){
+    return 1;
+  }
+  else {
+    return fibonacci(n-1) + fibonacci(n-2)
+  }
+}
+```
 
 # What is pattern matching?
 
