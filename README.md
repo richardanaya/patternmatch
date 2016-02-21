@@ -1,10 +1,7 @@
 # patternmatch.js
 A pattern matching library in native javascript. This library is inspired from F# and other macro pattern matching libraries with functional programming in mind.  Particularly, I wanted to take advantage of new ES6 language structures to really create precise pattern matching expressions. Let's take a simple example of fibonacci:
-
 ![fibonacci equation](http://www.rapidtables.com/math/number/fibonacci/Fibonacci%20sequence.GIF)
-
 We could write this in javascript as follows
-
 ```javascript 
 function fibonacci(x){
   if(x==0){
@@ -18,9 +15,7 @@ function fibonacci(x){
   }
 }
 ```
-
 Even written like this, which may be totally suitable, there's alot of conditions that start requiring alot of code, testing x is a number, testing its not less than zero. Wouldn't it be nice to write this more concisely and accurately! 
-
 ```javascript 
 var fibonacci = patternmatch(
   [0],                       0,
@@ -29,9 +24,7 @@ var fibonacci = patternmatch(
   [ALL],                     Error("Not valid input!")
 )
 ```
-
 Nice! Much nicer than writing this.
-
 ```javascript 
 function fibonacci(x){
   if(typeof x != "number" || arguments.length > 1 || x<0){
@@ -48,7 +41,6 @@ function fibonacci(x){
   }
 }
 ```
-
 # What is pattern matching?
 
 Pattern matching is an idea from function programming to transform data using a very strict form of expression. Some languages are even pretty cool about telling you if you missed a certain case.  Sure, you could write a bunch of if statements, but programming is also part about communication. I wanted a very simple way to communicate what's going on.  Pattern matching tries to keep your code looking algebriac and less about state and variable comparison. I try to use various symbols in order to express what's going on.
