@@ -140,8 +140,8 @@ Match only parts of a pattern with ```_REST_```
 
 ```javascript
 var p = patternmatch(
-  [1,_REST_],  "starts with one",
-  [_REST_,3], "ends with 3",
+  [1,_REST_],   "starts with one",
+  [_REST_,3],   "ends with 3",
   [5,_REST_,5], "starts and ends with 5"
 );
 
@@ -157,8 +157,8 @@ Match within arrays too
 
 ```javascript
 var process = patternmatch(
-  ["command",$ARRAY("move",_REST_)], (cmd)=>"move command"+cmd[1],
-  ["command",ARRAY("jump")], "jump command"
+  ["command",$ARRAY("move",_REST_)],  (cmd)=>"move command"+cmd[1],
+  ["command",ARRAY("jump")],          "jump command"
 );
 
 process("command",["move","left"])    //"move command left"
@@ -171,10 +171,10 @@ Add your own conditions
 
 ```javascript
 var setTemperature = patternmatch(
-  [_NUMBER_.when((x)=>x>72), "too hot",
-  [_NUMBER_.when((x)=>x<72), "too cold",
-  [72],                      "just right"
-  [ALL],                     Error("Uhh.. consult the manual")
+  [_NUMBER_.when((x)=>x>72),  "too hot",
+  [_NUMBER_.when((x)=>x<72),  "too cold",
+  [72],                       "just right"
+  [ALL],                      Error("Uhh.. consult the manual")
 );
 
 setTemperature(80) //"too hot"
@@ -190,9 +190,9 @@ var POINT = extractor(function(pt){
   return [pt.x,pt.y];
 });
 var isOrigin = patternmatch(
-  [POINT(0,0)],                                             "you found the origin!",
-  [POINT(0,0).when(p=>Math.abs(p[0])<1&&Math.abs(p[1])<1)], "You're so close!",
-  [ALL],                                                    "not the origin"
+  [POINT(0,0)],                                              "you found the origin!",
+  [POINT(0,0).when(p=>Math.abs(p[0])<1&&Math.abs(p[1])<1)],  "You're so close!",
+  [ALL],                                                     "not the origin"
 );
 
 isOrigin({x:0,y:0}) //"you found the origin!"
