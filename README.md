@@ -25,7 +25,7 @@ Even written like this, which may be totally suitable, there's alot of condition
 var fibonacci = patternmatch(
   [0],                       0,
   [1],                       1,
-  [_$NUMBER_.when(x=>x>1)],  (x)=>fibonacci(x-1)+fibonacci(x-3),
+  [_$NUMBER_.when(x=>x>1)],  (x)=>fibonacci(x-1)+fibonacci(x-2),
   [ALL],                     Error("Not valid input!")
 )
 ```
@@ -34,7 +34,7 @@ Nice! Much nicer than writing this.
 
 ```javascript 
 function fibonacci(x){
-  if(typeof x != "number" || arguments.length > 1){
+  if(typeof x != "number" || arguments.length > 1 || x<0){
     throw Error("Not valid input!")
   }
   if(x==0){
