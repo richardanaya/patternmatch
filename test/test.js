@@ -13,6 +13,7 @@ var _STRING_ = patternmatch._STRING_;
 var _$STRING_ = patternmatch._$STRING_;
 var ARRAY = patternmatch.ARRAY;
 var $ARRAY = patternmatch.$ARRAY;
+var extractor = patternmatch.extractor;
 
 describe('match', function() {
   it('should throw if used empty', function () {
@@ -295,5 +296,15 @@ describe('pattern', function() {
   it('should fail match condition immediately', function () {
     var p = pattern(_NUMBER_.when(function(x){return true}));
     assert.equal(false, p("Hello").matches);
+  });
+  it('should create an extractor that can handle normal pattern format', function () {
+    var POINT = extractor(function(pt){
+      return [pt.x,pt.y];
+    });
+    var pt = {x:1,y:2}
+    var pt2 = {x:2,y:2}
+    var p = pattern(POINT(1,2));
+    assert.equal(true, p(pt).matches);
+    assert.equal(false, p(pt2).matches);
   });
 })

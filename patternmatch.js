@@ -127,8 +127,9 @@
   PatternBuilder.SINGLE = 0;
   PatternBuilder.REST = 1;
   PatternBuilder.prototype.process = function(x){
+    this.value = x;
     for(var i=0;i<this.processors.length;i++){
-      this.processors[i].call(this,x)
+      this.processors[i].call(this,this.value)
       if(this.matches == false){
         return this;
       }
@@ -138,6 +139,13 @@
   PatternBuilder.prototype.equals = function(x){
     this.processors.push(function(val){
       this.matches = val==x;
+    })
+    return this;
+  }
+  PatternBuilder.prototype.transform = function(fn){
+    this.processors.push(function(x){
+      this.matches = true;
+      this.value = fn(x);
     })
     return this;
   }
@@ -193,6 +201,26 @@
     return this;
   }
 
+  var ARRAY = function(){
+    var args = Array.prototype.slice.call(arguments);
+    var pb = new PatternBuilder()
+    return pb.array.apply(pb,args);
+  }
+
+  var $ARRAY = function(){
+    var args = Array.prototype.slice.call(arguments);
+    var pb = new PatternBuilder()
+    return pb.array.apply(pb,args).var();
+  }
+
+  var extractor = function(extract){
+    return function(){
+      var args = Array.prototype.slice.call(arguments);
+      var pb = new PatternBuilder()
+      return pb.transform(extract).array.apply(pb,args).var();
+    }
+  }
+
   window.patternmatch = module.exports = {
     pattern  : pattern,
     match    : match,
@@ -205,16 +233,9 @@
     _$NUMBER_ :  new PatternBuilder().isType("number").var(),
     _STRING_ :  new PatternBuilder().isType("string"),
     _$STRING_ :  new PatternBuilder().isType("string").var(),
-    ARRAY :  function(){
-      var args = Array.prototype.slice.call(arguments);
-      var pb = new PatternBuilder()
-      return pb.array.apply(pb,args);
-    },
-    $ARRAY :  function(){
-      var args = Array.prototype.slice.call(arguments);
-      var pb = new PatternBuilder()
-      return pb.array.apply(pb,args).var();
-    }
+    ARRAY :  ARRAY,
+    $ARRAY : $ARRAY,
+    extractor: extractor
   };
 })(
   typeof window !== "undefined" ? window : {},
