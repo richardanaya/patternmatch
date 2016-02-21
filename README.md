@@ -19,7 +19,7 @@ function fibonacci(x){
 }
 ```
 
-Even written like this, which may be totally suitable, there's alot of conditions that start requiring distracting code: testing correct arguments, testing x is a number, testing its not less than zero. Wouldn't it be nice to write this more concisely and accurately in a fairly performant way! That's what this project is about:
+Even written like this, which may be totally suitable, there's alot of conditions that start requiring distracting code: testing correct arguments, testing x is a number, testing its not less than zero. Wouldn't it be nice to write this more concisely and accurately! That's what this project is about:
 
 ```javascript 
 var fibonacci = patternmatch(
