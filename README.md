@@ -73,7 +73,7 @@ p(1,2,3)              //3
 
 ##Types
 
-Use type specific symbols (_NUMBER_,_BOOL_,_STRING_) to match based on type
+Use type specific symbols (```_NUMBER_,_BOOL_,_STRING_```) to match based on type
 
 ```javascript
 var add = patternmatch(
@@ -88,7 +88,7 @@ add("foo")  //error: Cannot add non number
 ```
 ##Partial matching
 
-Match only parts of a pattern with _REST_
+Match only parts of a pattern with ```_REST_```
 
 ```javascript
 var p = patternmatch(
