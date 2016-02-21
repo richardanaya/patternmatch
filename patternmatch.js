@@ -25,6 +25,10 @@
 
   var pattern = function(){
     var patternParams = Array.prototype.slice.call(arguments);
+    if(patternParams.length==0){throw Error("Pattern requires definition!")}
+    if(patternParams[0]!=null && patternParams[0]!=undefined && patternParams[0]._______ALL_______){
+      return function(){return {matches:true}}
+    }
     var processors = patternParams.map(function(x){
       if(x!=null && x!=undefined && x.___PROCESSOR___){
         return x;
@@ -42,7 +46,6 @@
       }
     }
 
-    if(patternParams.length==0){throw Error("Pattern requires definition!")}
     return function(){
       var callParams = Array.prototype.slice.call(arguments);
       if(restIndex==-1&&callParams.length!=processors.length){
@@ -138,7 +141,7 @@
   }
   PatternBuilder.prototype.equals = function(x){
     this.processors.push(function(val){
-      this.matches = val==x;
+      this.matches = val===x;
     })
     return this;
   }
@@ -233,9 +236,12 @@
     _$NUMBER_ :  new PatternBuilder().isType("number").var(),
     _STRING_ :  new PatternBuilder().isType("string"),
     _$STRING_ :  new PatternBuilder().isType("string").var(),
+    _BOOL_ :  new PatternBuilder().isType("boolean"),
+    _$BOOL_ :  new PatternBuilder().isType("boolean").var(),
     ARRAY :  ARRAY,
     $ARRAY : $ARRAY,
-    extractor: extractor
+    extractor: extractor,
+    ALL: {_______ALL_______:true}
   };
 })(
   typeof window !== "undefined" ? window : {},

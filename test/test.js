@@ -11,8 +11,11 @@ var _NUMBER_ = patternmatch._NUMBER_;
 var _$NUMBER_ = patternmatch._$NUMBER_;
 var _STRING_ = patternmatch._STRING_;
 var _$STRING_ = patternmatch._$STRING_;
+var _BOOL_ = patternmatch._BOOL_;
+var _$BOOL_ = patternmatch._$BOOL_;
 var ARRAY = patternmatch.ARRAY;
 var $ARRAY = patternmatch.$ARRAY;
+var ALL = patternmatch.ALL;
 var extractor = patternmatch.extractor;
 
 describe('match', function() {
@@ -105,6 +108,10 @@ describe('pattern', function() {
   it('should fail a match', function () {
     var p = pattern(42);
     assert.equal(false, p(43).matches);
+  });
+  it('should fail a match that is fuzzy equals', function () {
+    var p = pattern(42);
+    assert.equal(false, p("42").matches);
   });
   it('should match multiple', function () {
     var p = pattern(1,2);
@@ -219,22 +226,42 @@ describe('pattern', function() {
     assert.equal(true, p(1).matches);
     assert.equal(false, p("hey").matches);
   });
-  it('should match with _STRING_ as isType("string")', function () {
-    var p = pattern(_STRING_);
-    assert.equal(false, p(1).matches);
-    assert.equal(true, p("hey").matches);
-  });
   it('should match with _$NUMBER_ as isType("number").var()', function () {
     var p = pattern(_$NUMBER_);
     assert.equal(true, p(1).matches);
     assert.equal(1, p(1).variables[0]);
     assert.equal(false, p("hey").matches);
   });
+  it('should match with _STRING_ as isType("string")', function () {
+    var p = pattern(_STRING_);
+    assert.equal(false, p(1).matches);
+    assert.equal(true, p("hey").matches);
+  });
   it('should match with _$STRING_ as isType("string").var()', function () {
     var p = pattern(_$STRING_);
     assert.equal(false, p(1).matches);
     assert.equal(true, p("hey").matches);
     assert.equal("hey", p("hey").variables[0]);
+  });
+  it('should match with _BOOL_ as isType("boolean")', function () {
+    var p = pattern(_BOOL_);
+    assert.equal(false, p(1).matches);
+    assert.equal(true, p(true).matches);
+    assert.equal(true, p(false).matches);
+  });
+  it('should match with _$BOOL_ as isType("boolean").var()', function () {
+    var p = pattern(_$BOOL_);
+    assert.equal(false, p(1).matches);
+    assert.equal(true, p(true).matches);
+    assert.equal(true, p(true).variables[0]);
+    assert.equal(false, p(false).variables[0]);
+  });
+  it('should match not have fuzzy type match', function () {
+    var p = pattern(_$BOOL_);
+    assert.equal(false, p(1).matches);
+    assert.equal(true, p(true).matches);
+    assert.equal(true, p(true).variables[0]);
+    assert.equal(false, p(false).variables[0]);
   });
   it('should match empty array', function () {
     var b = new PatternBuilder().array();
@@ -306,5 +333,13 @@ describe('pattern', function() {
     var p = pattern(POINT(1,2));
     assert.equal(true, p(pt).matches);
     assert.equal(false, p(pt2).matches);
+  });
+  it('should match all with everything', function () {
+    var p = pattern(ALL);
+    assert.equal(true, p("Hello").matches);
+    assert.equal(true, p(1).matches);
+    assert.equal(true, p().matches);
+    assert.equal(true, p(null).matches);
+    assert.equal(true, p(false).matches);
   });
 })
