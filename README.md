@@ -59,7 +59,7 @@ npm install patternmatch
 ```
 OR
 ```
-<script src="https://npmcdn.com/patternmatch@latest/patternmatch.js"></script>
+<script src="https://unpkg.com/patternmatch@latest/patternmatch.js"></script>
 ```
 
 # Patterns
